@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{% if vacancy %}Редактирование{% else %}Создание{% endif %} вакансии</title>
+    <style>
+        body { font-family: Arial; max-width: 600px; margin: 0 auto; padding: 20px; }
+        .form-group { margin: 15px 0; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        .company-info { background: #e9ecef; padding: 10px; border-radius: 4px; }
+        .btn-submit { background: #28a745; color: white; padding: 12px 24px; border: none; border-radius: 4px; cursor: pointer; margin-right: 10px; }
+        .btn-submit:hover { background: #218838; }
+        .cancel { display: inline-block; background: #6c757d; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; }
+        .cancel:hover { background: #5a6268; }
+        .error { color: #dc3545; background: #f8d7da; padding: 10px; border-radius: 4px; margin: 15px 0; }
+    </style>
+</head>
+<body>
+    <h1>{% if vacancy %}Редактирование{% else %}Создание{% endif %} вакансии</h1>
+    
+    {% if error %}
+        <div class="error">{{ error }}</div>
+    {% endif %}
+    
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label>Название вакансии:</label>
+            <input type="text" name="title" value="{% if vacancy %}{{ vacancy.title }}{% endif %}" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Компания:</label>
+            <div class="company-info">
+                {% if vacancy %}
+                    {{ vacancy.company }}
+                {% else %}
+                    {{ company_name|default:user.employerprofile.company_name }}
+                {% endif %}
+            </div>
+            {% if user.is_superuser and not vacancy %}
+            <small style="color: #666;">Если нужно изменить компанию, сделайте это в профиле</small>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label>Сфера деятельности:</label>
+            <select name="sphere" required>
+                <option value="">Выберите сферу</option>
+                {% for value, label in spheres %}
+                    <option value="{{ value }}" {% if vacancy and vacancy.sphere == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div style="margin-top: 30px;">
+            <button type="submit" class="btn-submit">Сохранить</button>
+            <a href="{% url 'vacancy_list' %}" class="cancel">Отмена</a>
+        </div>
+    </form>
+</body>
+</html>

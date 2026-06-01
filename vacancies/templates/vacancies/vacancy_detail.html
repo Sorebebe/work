@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ vacancy.title }}</title>
+    <style>
+        body { font-family: Arial; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .back { display: inline-block; padding: 10px 20px; background-color: #6c757d; color: white; text-decoration: none; border-radius: 5px; margin-top: 20px; }
+        .btn { display: inline-block; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-right: 10px; color: white; }
+        .btn-edit { background-color: #626ef5; }
+        .btn-edit:hover { background-color: #4a56e0; }
+        .btn-delete { background-color: #f3658b; }
+        .btn-delete:hover { background-color: #e04a73; }
+        .response-form { background: #f8f9fa; padding: 20px; margin: 20px 0; border-radius: 5px; border: 1px solid #ddd; }
+        .response-form input { display: block; width: 100%; padding: 8px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        .response-form button { background: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; }
+        .response-form button:hover { background: #218838; }
+        .message { padding: 10px; margin: 10px 0; border-radius: 4px; }
+        .message.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .message.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .vacancy-info { background: white; padding: 20px; border-radius: 5px; border: 1px solid #eee; }
+        .button-group { margin: 20px 0; padding: 15px 0; border-top: 1px solid #eee; border-bottom: 1px solid #eee; }
+    </style>
+</head>
+<body>
+    <div class="vacancy-info">
+        <h1>{{ vacancy.title }}</h1>
+        <p><strong>Компания:</strong> {{ vacancy.company }}</p>
+        <p><strong>Сфера:</strong> {{ vacancy.get_sphere_display }}</p>
+        <p><strong>Дата публикации:</strong> {{ vacancy.created_at|date:"d.m.Y H:i" }}</p>
+    </div>
+    
+    {% if messages %}
+        {% for message in messages %}
+            <div class="message {% if message.tags %}{{ message.tags }}{% endif %}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+    
+    {% if user.is_authenticated %}
+    <div class="button-group">
+        {% if vacancy.employer_id == user.id and not user.is_superuser %}
+            <a href="{% url 'vacancy_update' vacancy.id %}" class="btn btn-edit">Редактировать</a>
+        {% endif %}
+        
+        {% if user.is_superuser or vacancy.employer_id == user.id %}
+            <a href="{% url 'vacancy_delete' vacancy.id %}" class="btn btn-delete">Удалить</a>
+        {% endif %}
+        
+        <a href="{% url 'vacancy_list' %}" class="back">← Назад к списку</a>
+    </div>
+{% else %}
+    <div class="button-group">
+        <a href="{% url 'vacancy_list' %}" class="back">← Назад к списку</a>
+    </div>
+{% endif %}
+    
+    {% if not user.is_authenticated %}
+        <div class="response-form">
+            <h3>Откликнуться на вакансию</h3>
+            <form method="post" action="{% url 'vacancy_response' vacancy.id %}">
+                {% csrf_token %}
+                <input type="text" name="first_name" placeholder="Имя" required>
+                <input type="text" name="last_name" placeholder="Фамилия" required>
+                <input type="text" name="phone" placeholder="Телефон (например: +79991234567)" required>
+                <button type="submit">Отправить отклик</button>
+            </form>
+            <p style="font-size: 12px; color: #666; margin-top: 10px;">
+                *Откликаясь, вы даете согласие на обработку персональных данных
+            </p>
+        </div>
+    {% endif %}
+</body>
+</html>

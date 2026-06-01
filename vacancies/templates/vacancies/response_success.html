@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Отклик отправлен</title>
+    <style>
+        body { font-family: Arial; max-width: 500px; margin: 100px auto; text-align: center; }
+        .success { color: #155724; background: #d4edda; padding: 20px; border-radius: 5px; margin-bottom: 20px; }
+        .btn { display: inline-block; padding: 12px 30px; background: #e673ec; color: white; text-decoration: none; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="success">Ваш отклик успешно отправлен!</div>
+    <a href="{% url 'vacancy_list' %}" class="btn">Вернуться на главную</a>
+</body>
+</html>
