@@ -10,6 +10,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Копируем весь код проекта
 COPY . .
+RUN rm -f db.sqlite3
+RUN rm -f vacancies/migrations/0*.py
 
 RUN python manage.py makemigrations
 
