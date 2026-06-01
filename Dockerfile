@@ -11,6 +11,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Копируем весь код проекта
 COPY . .
 
+RUN python manage.py makemigrations
+
 # Выполняем миграции при старте (чтобы база db.sqlite3 была готова)
 RUN python manage.py migrate
 
