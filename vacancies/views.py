@@ -25,12 +25,18 @@ from employment_project.dependencies import (
 def register(request):
     """Регистрация нового работодателя"""
     if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        company_name = request.POST.get('company_name')
-        email = request.POST.get('email')
-        address = request.POST.get('address')
+        # strip() убирает случайные пробелы по краям
+        username = request.POST.get('username', '').strip()
+        password = request.POST.get('password', '').strip()
+        company_name = request.POST.get('company_name', '').strip()
+        email = request.POST.get('email', '').strip()
+        address = request.POST.get('address', '').strip()
         
+        # --- ДОБАВЛЕНА ПРОВЕРКА НА ПУСТЫЕ ПОЛЯ ---
+        if not username or not password or not company_name:
+            messages.error(request, 'Пожалуйста, заполните все обязательные поля формы.')
+            return render(request, 'vacancies/register.html')
+            
         if User.objects.filter(username=username).exists():
             messages.error(request, 'Пользователь с таким логином уже существует')
             return render(request, 'vacancies/register.html')
