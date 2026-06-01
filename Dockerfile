@@ -18,6 +18,9 @@ RUN python manage.py makemigrations
 # Выполняем миграции при старте (чтобы база db.sqlite3 была готова)
 RUN python manage.py migrate
 
+# Автоматически создаем суперюзера (admin / admin)
+RUN echo "from django.contrib.auth.models import User; User.objects.filter(username='admin').exists() or User.objects.create_superuser('admin', 'admin@example.com', 'admin')" | python manage.py shell
+
 # Приложение внутри контейнера будет работать на стандартном порту 8000
 EXPOSE 8000
 
