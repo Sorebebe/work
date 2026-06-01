@@ -5,12 +5,42 @@
     <title>Регистрация</title>
 </head>
 <body>
-    <h2>Регистрация нового пользователя</h2>
-    <form method="post">
+    <h2>Регистрация нового работодателя</h2>
+    
+    {% if messages %}
+        <ul style="color: red;">
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <form method="post" action="{% url 'register' %}">
         {% csrf_token %}
-        {{ form.as_p }}
+        <p>
+            <label>Логин:</label><br>
+            <input type="text" name="username" required>
+        </p>
+        <p>
+            <label>Пароль:</label><br>
+            <input type="password" name="password" required>
+        </p>
+        <p>
+            <label>Название компании:</label><br>
+            <input type="text" name="company_name" required>
+        </p>
+        <p>
+            <label>Почта (Email):</label><br>
+            <input type="email" name="email" required>
+        </p>
+        <p>
+            <label>Адрес:</label><br>
+            <input type="text" name="address" required>
+        </p>
+        
         <button type="submit">Зарегистрироваться</button>
     </form>
+    
     <p>Уже есть аккаунт? <a href="{% url 'login' %}">Войти</a></p>
     <br>
     <a href="{% url 'vacancy_list' %}">Вернуться к списку вакансий</a>

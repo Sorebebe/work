@@ -25,34 +25,35 @@ from employment_project.dependencies import (
 def register(request):
     """Регистрация нового работодателя"""
     if request.method == 'POST':
-        # strip() убирает случайные пробелы по краям
+        print("========== ПОЛУЧЕН POST-ЗАПРОС ==========")
+        print("Данные из формы:", request.POST)
+        
         username = request.POST.get('username', '').strip()
         password = request.POST.get('password', '').strip()
         company_name = request.POST.get('company_name', '').strip()
         email = request.POST.get('email', '').strip()
         address = request.POST.get('address', '').strip()
         
-        # --- ДОБАВЛЕНА ПРОВЕРКА НА ПУСТЫЕ ПОЛЯ ---
         if not username or not password or not company_name:
+            print("ОШИБКА: Одно из полей пустое!")
             messages.error(request, 'Пожалуйста, заполните все обязательные поля формы.')
             return render(request, 'vacancies/register.html')
             
         if User.objects.filter(username=username).exists():
+            print(f"ОШИБКА: Пользователь '{username}' уже существует в базе!")
             messages.error(request, 'Пользователь с таким логином уже существует')
             return render(request, 'vacancies/register.html')
         
+        # ... (здесь идет старый код создания пользователя)
         user = User.objects.create_user(username=username, password=password)
-        
         employer_group, _ = Group.objects.get_or_create(name='Работодатели')
         user.groups.add(employer_group)
         
         EmployerProfile.objects.create(
-            user=user,
-            company_name=company_name,
-            email=email,
-            address=address
+            user=user, company_name=company_name, email=email, address=address
         )
         
+        print("УСПЕХ: Пользователь успешно создан. Перенаправляем на логин.")
         messages.success(request, 'Регистрация успешна! Теперь вы можете войти.')
         return redirect('login')
     
