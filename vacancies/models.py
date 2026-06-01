@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.db import models
-from django.contrib.auth.models import User
+
+
 
 class EmployerProfile(models.Model):
     """Профиль работодателя (переехал из accounts)"""
@@ -58,26 +58,3 @@ class Response(models.Model):
         return f"{self.first_name} {self.last_name} → {self.vacancy.title}"
 
 
-class EmployerProfile(models.Model):
-
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    company_name = models.CharField(max_length=200, verbose_name='Название компании')
-    email = models.EmailField(verbose_name='Почта')
-    address = models.CharField(max_length=300, verbose_name='Адрес')
-    
-    def __str__(self):
-        return f"{self.company_name} ({self.user.username})"
-
-
-class DjangoVacancy(models.Model):
- 
-    title = models.CharField(max_length=200, verbose_name='Название')
-    company = models.CharField(max_length=200, verbose_name='Компания')
-    sphere = models.CharField(max_length=50, verbose_name='Сфера')
-    employer_id = models.IntegerField(verbose_name='ID Работодателя', default=0)
-
-    class Meta:
-        db_table = 'vacancies_vacancy'  # Чтобы не ломалась старая БД
-
-    def __str__(self):
-        return self.title    

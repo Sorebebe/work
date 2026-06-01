@@ -226,3 +226,34 @@ class VacancyDeleteView(LoginRequiredMixin, View):
         except (ValueError, PermissionError) as e:
             messages.error(request, str(e))
         return redirect('vacancy_list')
+
+
+from rest_framework import viewsets
+from rest_framework.response import Response
+from .serializers import VacancySerializer
+
+class VacancyViewSet(viewsets.ViewSet):
+    """API для работы с вакансиями"""
+    
+    def list(self, request):
+        sphere = request.query_params.get('sphere')
+        page = int(request.query_params.get('page', 1))
+        
+        use_case = get_list_vacancies_use_case()
+        result = use_case.execute(sphere=sphere, page=page, page_size=10)
+        
+        serializer = VacancySerializer(result['items'], many=True)
+        return Response({
+            'items': serializer.data,
+            'total': result['total']
+        })
+
+    def retrieve(self, request, pk=None):
+        use_case = get_list_vacancies_use_case()
+        vacancy = use_case.vacancy_repo.get_by_id(pk)
+        
+        if not vacancy:
+            raise Http404("Вакансия не найдена")
+            
+        serializer = VacancySerializer(vacancy)
+        return Response(serializer.data)
