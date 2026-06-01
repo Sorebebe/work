@@ -87,3 +87,4 @@ REST_FRAMEWORK = {
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'vacancy_list'
 LOGOUT_REDIRECT_URL = 'vacancy_list'
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

@@ -43,9 +43,7 @@ class Vacancy(models.Model):
         verbose_name = 'Вакансия'
         verbose_name_plural = 'Вакансии'
         ordering = ['-created_at']
-    
-    def __str__(self):
-        return f"{self.title} - {self.company}"
+        db_table = 'vacancies_vacancy_new' 
 
 class Response(models.Model):
     vacancy = models.ForeignKey(Vacancy, on_delete=models.CASCADE, related_name='responses')
